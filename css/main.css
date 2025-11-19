@@ -1,0 +1,96 @@
+  /* Custom styles for handles */
+        .handle {
+            width: 20px;
+            height: 20px;
+            background-color: #e11d48; /* Rose-600 */
+            border: 3px solid white;
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            cursor: grab;
+            z-index: 20;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            pointer-events: auto; 
+        }
+
+        .handle:active {
+            cursor: grabbing;
+            transform: translate(-50%, -50%) scale(1.2);
+            background-color: #be123c;
+        }
+        .handle.active {
+            background-color: #fbbf24; /* Amber-400 */
+            z-index: 30;
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.3);
+        }
+
+        /* Global Dragging State */
+        body.is-dragging {
+            cursor: grabbing !important;
+            user-select: none;
+        }
+        body.is-dragging * {
+            cursor: grabbing !important;
+        }
+
+        /* Grid Pattern Background */
+        .bg-grid-pattern {
+            background-size: 20px 20px;
+            background-image:
+                linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; 
+        }
+
+        /* Toast Animation */
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .toast {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        .toast.hiding {
+            animation: fadeOut 0.3s ease-in forwards;
+        }
+
+        /* Custom Color Input Styling */
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            overflow: hidden;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+            border: 2px solid #475569;
+        }

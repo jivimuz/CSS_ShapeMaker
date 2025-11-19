@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Clip-Path Maker</title>
+    <link href="css/main.css" rel="stylesheet" />
+  
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="border-b border-slate-700 bg-slate-800 p-4 shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-rose-600 rounded-lg flex items-center justify-center shadow-lg shadow-rose-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm8.486-8.486a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243z" />
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold text-white tracking-tight">Shape<span class="text-rose-500">Maker</span></h1>
+            </div>
+            <a href="#" class="text-sm text-slate-400 hover:text-white transition-colors">Jivi Muzaqi Guntur</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 container mx-auto p-4 md:p-8 flex flex-col lg:flex-row gap-8">
+        
+        <!-- Left Column: Editor -->
+        <div class="flex-1 flex flex-col gap-4">
+            
+            <!-- Toolbar Controls -->
+            <div class="flex gap-2 justify-between bg-slate-800 p-2 rounded-xl border border-slate-700">
+                <div class="flex gap-2">
+                     <button onclick="addPoint()" class="px-3 py-2 bg-slate-700 hover:bg-emerald-600 text-slate-200 hover:text-white text-xs md:text-sm font-medium rounded-lg transition-colors flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add Point
+                    </button>
+                    <button onclick="removeActivePoint()" class="px-3 py-2 bg-slate-700 hover:bg-rose-600 text-slate-200 hover:text-white text-xs md:text-sm font-medium rounded-lg transition-colors flex items-center gap-1" title="Remove the last clicked point">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Remove Point
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="resetZoom()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors flex items-center gap-1" title="Reset Zoom">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                        </svg>
+                        <span class="text-xs hidden sm:inline">Reset</span>
+                    </button>
+                    <!-- Quick scroll to settings on mobile -->
+                    <button onclick="scrollToSettings()" class="lg:hidden px-3 py-2 bg-slate-700 hover:bg-indigo-600 text-white rounded-lg transition-colors" title="Background Settings">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-slate-800 rounded-2xl p-1 shadow-xl border border-slate-700 relative group">
+                
+                <!-- Workspace Container -->
+                <div class="relative w-full bg-slate-900 rounded-xl overflow-hidden aspect-square md:aspect-video bg-grid-pattern select-none touch-none cursor-crosshair" id="workspace">
+                    
+                    <!-- Wrapper for Zooming -->
+                    <div id="zoom-container" class="w-full h-full relative flex items-center justify-center transition-transform duration-75 ease-out origin-center will-change-transform">
+                        
+                        <!-- The Target Element (Clipped) -->
+                        <div id="clipped-element" class="absolute inset-0 w-[280px] h-[280px] md:w-[400px] md:h-[400px] m-auto bg-cover bg-center transition-all duration-75 shadow-2xl" 
+                             style="background-image: url('https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                            <!-- Overlay to make shapes clearer on dark/light images -->
+                            <div class="absolute inset-0 bg-rose-500/20 pointer-events-none"></div>
+                        </div>
+
+                        <!-- Handles Layer (Generated by JS) -->
+                        <div id="handles-layer" class="absolute inset-0 w-[280px] h-[280px] md:w-[400px] md:h-[400px] m-auto pointer-events-none">
+                            <!-- Handles injected here -->
+                        </div>
+
+                    </div>
+                    
+                    <!-- Info Overlay (Static) -->
+                    <div class="absolute bottom-2 right-2 flex gap-2 pointer-events-none">
+                        <div class="text-xs text-slate-500 font-mono bg-slate-900/90 border border-slate-700 px-2 py-1 rounded shadow backdrop-blur-sm">
+                            <span id="zoom-level">100%</span>
+                        </div>
+                        <div class="text-xs text-slate-500 font-mono bg-slate-900/90 border border-slate-700 px-2 py-1 rounded shadow backdrop-blur-sm">
+                            <span id="canvas-dims">400 x 400</span> px
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Intro Text -->
+            <p class="text-slate-400 text-sm text-center lg:text-left flex items-center gap-2 justify-center lg:justify-start">
+                💡 <span class="font-semibold text-slate-300">Tips:</span> Scroll mouse to Zoom.
+            </p>
+        </div>
+
+        <!-- Right Column: Controls & Code -->
+        <div class="w-full lg:w-96 flex flex-col gap-6" id="right-panel">
+            
+            <!-- CSS Output -->
+            <div class="bg-slate-800 rounded-xl border border-slate-700 shadow-lg overflow-hidden flex flex-col">
+                <div class="bg-slate-900/50 p-3 border-b border-slate-700 flex justify-between items-center">
+                    <span class="text-sm font-bold text-slate-300 uppercase tracking-wider">CSS Output</span>
+                    <button onclick="copyToClipboard()" class="text-xs bg-rose-600 hover:bg-rose-500 text-white px-3 py-1.5 rounded transition-colors flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <div class="relative group">
+                    <pre class="p-4 bg-slate-950 text-rose-400 font-mono text-sm overflow-x-auto whitespace-pre-wrap break-all leading-relaxed" id="css-code">clip-path: polygon(50% 0%, 0% 100%, 100% 100%);</pre>
+                </div>
+            </div>
+
+            <!-- Background Settings -->
+            <div class="bg-slate-800 rounded-xl border border-slate-700 shadow-lg p-4 flex flex-col gap-4" id="bg-settings">
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-700 pb-2">Background Settings</h3>
+                
+                <!-- Preset Images -->
+                <div>
+                    <label class="text-xs text-slate-500 mb-2 block">Select Image (Preset)</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="setBgImage('https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')" class="aspect-square rounded-md overflow-hidden border border-slate-600 hover:border-rose-500 bg-cover bg-center transition-all" style="background-image: url('https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=60')" title="Nature"></button>
+                        <button onclick="setBgImage('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')" class="aspect-square rounded-md overflow-hidden border border-slate-600 hover:border-rose-500 bg-cover bg-center transition-all" style="background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=60')" title="City"></button>
+                        <button onclick="setBgImage('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')" class="aspect-square rounded-md overflow-hidden border border-slate-600 hover:border-rose-500 bg-cover bg-center transition-all" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=60')" title="Abstract"></button>
+                        <button onclick="setBgImage('https://images.unsplash.com/photo-1534067783741-51a5dd91d33e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')" class="aspect-square rounded-md overflow-hidden border border-slate-600 hover:border-rose-500 bg-cover bg-center transition-all" style="background-image: url('https://images.unsplash.com/photo-1534067783741-51a5dd91d33e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=60')" title="Texture"></button>
+                    </div>
+                </div>
+
+                <!-- Custom URL & Color -->
+                <div class="flex gap-2 items-end">
+                    <div class="flex-1">
+                        <label class="text-xs text-slate-500 mb-1 block">Custom URL</label>
+                        <input type="text" id="custom-url-input" placeholder="https://..." class="w-full bg-slate-900 border border-slate-700 text-slate-300 text-xs rounded px-2 py-2 focus:border-rose-500 focus:outline-none">
+                    </div>
+                    <button onclick="applyCustomUrl()" class="bg-slate-700 hover:bg-rose-600 text-white text-xs rounded px-3 py-2 h-[34px] transition-colors">
+                        Apply
+                    </button>
+                </div>
+
+                <!-- Color Picker -->
+                <div class="flex items-center gap-3 border-t border-slate-700/50 pt-3">
+                    <div class="relative">
+                        <input type="color" id="bg-color-picker" value="#e11d48" onchange="setBgColor(this.value)">
+                    </div>
+                    <span class="text-xs text-slate-400">Or choose a solid color</span>
+                </div>
+            </div>
+
+            <!-- Shape Presets -->
+            <div>
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Basic Shapes (Presets)</h3>
+                <div class="grid grid-cols-3 sm:grid-cols-4 gap-2" id="presets-container">
+                    <!-- Buttons injected by JS -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    
+    <script src="js/tailwindcss.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
